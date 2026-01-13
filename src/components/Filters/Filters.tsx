@@ -121,10 +121,10 @@ export default function Filters({ filters, onFiltersChange, eventCount }: Filter
                 onClick={() => handleFilterChange({ 
                   dateTime: new Date().toISOString().slice(0, 10) 
                 })}
-                className={`px-3 py-2 text-sm rounded-md border transition-colors ${
+                className={`px-3 py-2 text-sm rounded-md border transition-colors font-medium ${
                   localFilters.dateTime?.includes(new Date().toISOString().slice(0, 10))
-                    ? 'border-blue-500 bg-blue-50 text-blue-700'
-                    : 'border-gray-300 hover:bg-gray-50'
+                    ? 'border-blue-500 bg-blue-50 text-blue-800'
+                    : 'border-gray-300 hover:bg-gray-50 text-gray-800'
                 }`}
               >
                 Idag
@@ -137,10 +137,10 @@ export default function Filters({ filters, onFiltersChange, eventCount }: Filter
                     dateTime: yesterday.toISOString().slice(0, 10) 
                   });
                 }}
-                className={`px-3 py-2 text-sm rounded-md border transition-colors ${
+                className={`px-3 py-2 text-sm rounded-md border transition-colors font-medium ${
                   localFilters.dateTime?.includes(new Date(Date.now() - 86400000).toISOString().slice(0, 10))
-                    ? 'border-blue-500 bg-blue-50 text-blue-700'
-                    : 'border-gray-300 hover:bg-gray-50'
+                    ? 'border-blue-500 bg-blue-50 text-blue-800'
+                    : 'border-gray-300 hover:bg-gray-50 text-gray-800'
                 }`}
               >
                 Igår
@@ -203,10 +203,10 @@ export default function Filters({ filters, onFiltersChange, eventCount }: Filter
                       });
                     }}
                     className={`
-                      flex items-center gap-2 px-3 py-2 text-sm rounded-md border transition-colors text-left
+                      flex items-center gap-2 px-3 py-2 text-sm rounded-md border transition-colors text-left font-medium
                       ${isSelected
-                        ? 'border-blue-500 bg-blue-50 text-blue-700'
-                        : 'border-gray-300 hover:bg-gray-50'
+                        ? 'border-blue-500 bg-blue-50 text-blue-800'
+                        : 'border-gray-300 hover:bg-gray-50 text-gray-800'
                       }
                     `}
                   >
