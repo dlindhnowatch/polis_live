@@ -8,6 +8,7 @@ import EventMap from '@/components/Map/EventMap';
 import EventList from '@/components/EventList/EventList';
 import Filters from '@/components/Filters/Filters';
 import EventModal from '@/components/Modal/EventModal';
+import Logo from '@/components/Logo/Logo';
 import { PoliceEvent } from '@/types/police';
 
 const queryClient = new QueryClient();
@@ -60,8 +61,9 @@ function PoliceEventsApp() {
 
   return (
     <div className="h-screen flex flex-col bg-gray-100">
-      {/* Header with Filters */}
+      {/* Header with Logo and Filters */}
       <header className="flex-none">
+        <Logo />
         <Filters
           filters={filters}
           onFiltersChange={setFilters}

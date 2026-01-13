@@ -90,3 +90,39 @@ body {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;  /* Safari and Chrome */
 }
+
+/* Logo animations */
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes radar-sweep {
+  0% { transform: rotate(0deg) scaleX(0); }
+  50% { transform: rotate(180deg) scaleX(1); }
+  100% { transform: rotate(360deg) scaleX(0); }
+}
+
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+.radar-sweep {
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent, #3b82f6, transparent);
+  position: absolute;
+  left: 50%;
+  transform-origin: bottom;
+  animation: radar-sweep 3s ease-in-out infinite;
+}
