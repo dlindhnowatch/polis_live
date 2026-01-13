@@ -72,12 +72,15 @@ function PoliceEventsApp() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 flex overflow-hidden">
-        {/* Event List Sidebar */}
+      <main className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+        {/* Event List Sidebar - Mobile: Bottom Sheet, Desktop: Sidebar */}
         <aside className={`
-          flex-none transition-all duration-300 ease-in-out
-          ${isSidebarOpen ? 'w-96' : 'w-auto'}
-          lg:block
+          flex-none transition-all duration-300 ease-in-out z-20
+          lg:flex lg:w-96
+          ${isSidebarOpen 
+            ? 'fixed inset-x-0 bottom-0 h-2/3 lg:relative lg:h-auto lg:inset-auto' 
+            : 'hidden lg:w-auto'
+          }
         `}>
           <EventList
             events={events}
@@ -90,12 +93,30 @@ function PoliceEventsApp() {
         </aside>
 
         {/* Map */}
-        <section className="flex-1">
+        <section className="flex-1 relative">
           <EventMap
             events={events}
             selectedEventId={selectedEvent?.id}
             onEventSelect={handleEventSelect}
           />
+          
+          {/* Mobile: Floating Action Button to toggle sidebar */}
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="lg:hidden fixed bottom-4 right-4 z-30 bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg transition-colors"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          
+          {/* Mobile: Backdrop overlay */}
+          {isSidebarOpen && (
+            <div 
+              className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-10"
+              onClick={() => setIsSidebarOpen(false)}
+            />
+          )}
         </section>
       </main>
 

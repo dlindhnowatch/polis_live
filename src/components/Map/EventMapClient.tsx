@@ -24,7 +24,9 @@ interface EventMapClientProps {
 // Create custom marker icon based on event type
 const createCustomIcon = (eventType: string, isSelected: boolean = false) => {
   const eventInfo = getEventTypeInfo(eventType);
-  const size = isSelected ? 35 : 25;
+  // Larger markers on mobile for better touch interaction
+  const baseSize = window.innerWidth < 768 ? 28 : 25;
+  const size = isSelected ? baseSize + 8 : baseSize;
   
   return L.divIcon({
     className: 'custom-marker',
@@ -43,6 +45,8 @@ const createCustomIcon = (eventType: string, isSelected: boolean = false) => {
         font-weight: bold;
         font-size: ${size > 30 ? '14px' : '12px'};
         ${isSelected ? 'animation: pulse 2s infinite;' : ''}
+        cursor: pointer;
+        touch-action: manipulation;
       ">
         ${eventType.charAt(0).toUpperCase()}
       </div>
@@ -72,10 +76,22 @@ export default function EventMapClient({ events, selectedEventId, onEventSelect 
         zoom={5}
         className="h-full w-full"
         zoomControl={false}
+        touchZoom={true}
+        scrollWheelZoom={true}
+        doubleClickZoom={true}
+        dragging={true}
+        tap={true}
+        touchExtend={true}
+        bounceAtZoomLimits={true}
+        preferCanvas={true}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          tileSize={256}
+          updateWhenIdle={false}
+          updateWhenZooming={false}
+          keepBuffer={2}
         />
         
         <MarkerClusterGroup
@@ -151,27 +167,85 @@ export default function EventMapClient({ events, selectedEventId, onEventSelect 
         </MarkerClusterGroup>
       </MapContainer>
       
-      {/* Map Controls */}
-      <div className="absolute top-4 right-4 z-1000 flex flex-col gap-2">
+      {/* Mobile-optimized Map Controls */}
+      <div className="absolute top-4 right-4 z-[1000] flex flex-col gap-2">
+        {/* Zoom In */}
         <button
-          className="bg-white p-2 rounded-lg shadow-md hover:bg-gray-50 transition-colors"
+          className="bg-white p-3 md:p-2 rounded-lg shadow-md hover:bg-gray-50 transition-colors touch-manipulation"
           onClick={() => {
-            // Reset map view to Sweden
-            window.location.reload(); // Simple reset for now
+            const map = document.querySelector('.leaflet-container').__map;
+            if (map) map.zoomIn();
+          }}
+          title="Zooma in"
+        >
+          <svg className="w-5 h-5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+        </button>
+        
+        {/* Zoom Out */}
+        <button
+          className="bg-white p-3 md:p-2 rounded-lg shadow-md hover:bg-gray-50 transition-colors touch-manipulation"
+          onClick={() => {
+            const map = document.querySelector('.leaflet-container').__map;
+            if (map) map.zoomOut();
+          }}
+          title="Zooma ut"
+        >
+          <svg className="w-5 h-5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+          </svg>
+        </button>
+        
+        {/* Reset View */}
+        <button
+          className="bg-white p-3 md:p-2 rounded-lg shadow-md hover:bg-gray-50 transition-colors touch-manipulation"
+          onClick={() => {
+            const map = document.querySelector('.leaflet-container').__map;
+            if (map) {
+              map.setView([62.0, 15.0], 5);
+            }
           }}
           title="Återställ vy"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5a2 2 0 012-2h4a2 2 0 012 2v0H8v0z" />
+          <svg className="w-5 h-5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        </button>
+        
+        {/* My Location (if geolocation available) */}
+        <button
+          className="bg-white p-3 md:p-2 rounded-lg shadow-md hover:bg-gray-50 transition-colors touch-manipulation"
+          onClick={() => {
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition((position) => {
+                const map = document.querySelector('.leaflet-container').__map;
+                if (map) {
+                  map.setView([position.coords.latitude, position.coords.longitude], 10);
+                }
+              });
+            }
+          }}
+          title="Min plats"
+        >
+          <svg className="w-5 h-5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
         </button>
       </div>
       
-      {/* Events counter */}
-      <div className="absolute bottom-4 left-4 z-1000 bg-white px-3 py-2 rounded-lg shadow-md">
-        <p className="text-sm font-medium text-gray-700">
+      {/* Mobile-responsive Events counter */}
+      <div className="absolute bottom-4 left-4 z-[1000] bg-white px-3 py-2 rounded-lg shadow-md">
+        <p className="text-xs md:text-sm font-medium text-gray-700">
           {validEvents.length} händelser
+        </p>
+      </div>
+      
+      {/* Mobile: Touch instruction overlay (shows briefly on first load) */}
+      <div className="md:hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[999] bg-black bg-opacity-70 text-white px-4 py-2 rounded-lg pointer-events-none opacity-0 animate-fade-in-out">
+        <p className="text-sm text-center">
+          👆 Tryck på markering för detaljer
         </p>
       </div>
     </div>

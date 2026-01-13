@@ -70,16 +70,16 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
       />
       
       {/* Modal */}
-      <div className="relative min-h-screen flex items-center justify-center p-4">
-        <div className="relative bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+      <div className="relative min-h-screen flex items-end md:items-center justify-center p-0 md:p-4">
+        <div className="relative bg-white rounded-t-xl md:rounded-xl shadow-xl w-full md:max-w-2xl max-h-[95vh] md:max-h-[90vh] overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between p-4 md:p-6 border-b border-gray-200 bg-white sticky top-0 z-10">
             <div className="flex items-center gap-3">
               <div 
                 className="w-4 h-4 rounded-full"
                 style={{ backgroundColor: eventInfo.color }}
               />
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className="text-lg md:text-xl font-semibold text-gray-900">
                 {event.type}
               </h2>
               <span className="text-sm text-gray-600">#{event.id}</span>
@@ -105,20 +105,20 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
           </div>
           
           {/* Content */}
-          <div className="p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+          <div className="p-4 md:p-6 space-y-4 md:space-y-6 overflow-y-auto max-h-[calc(95vh-140px)] md:max-h-[calc(90vh-140px)]">
             {/* Event Details */}
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <h3 className="text-base md:text-lg font-medium text-gray-900 mb-2">
                   {event.name}
                 </h3>
-                <p className="text-gray-700 leading-relaxed">
+                <p className="text-gray-700 leading-relaxed text-sm md:text-base">
                   {event.summary}
                 </p>
               </div>
               
               {/* Location and Time */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <div className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
                   <div>

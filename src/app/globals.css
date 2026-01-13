@@ -91,6 +91,23 @@ body {
   display: none;  /* Safari and Chrome */
 }
 
+/* Mobile touch instruction animation */
+@keyframes fade-in-out {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.animate-fade-in-out {
+  animation: fade-in-out 3s ease-in-out;
+}
+
+/* Improve touch targets on mobile */
+.touch-manipulation {
+  touch-action: manipulation;
+}
+
 /* Logo animations */
 @keyframes gradient-shift {
   0%, 100% { background-position: 0% 50%; }

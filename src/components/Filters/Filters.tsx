@@ -46,7 +46,7 @@ export default function Filters({ filters, onFiltersChange, eventCount }: Filter
     <div className="bg-white border-b border-gray-200">
       {/* Compact Filter Bar */}
       <div className="p-4">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-3">
           {/* Search */}
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -67,35 +67,37 @@ export default function Filters({ filters, onFiltersChange, eventCount }: Filter
             )}
           </div>
 
-          {/* Filter Toggle */}
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className={`
-              flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors
-              ${activeFilterCount > 0 
-                ? 'border-blue-500 bg-blue-50 text-blue-800' 
-                : 'border-gray-300 hover:bg-gray-50 text-gray-800'
-              }
-            `}
-          >
-            <Filter className="w-4 h-4" />
-            <span className="text-sm font-medium">Filter</span>
-            {activeFilterCount > 0 && (
-              <span className="bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                {activeFilterCount}
-              </span>
-            )}
-          </button>
-
-          {/* Clear Filters */}
-          {activeFilterCount > 0 && (
+          <div className="flex items-center gap-2">
+            {/* Filter Toggle */}
             <button
-              onClick={clearAllFilters}
-              className="text-sm text-gray-700 hover:text-gray-900 transition-colors font-medium"
+              onClick={() => setIsExpanded(!isExpanded)}
+              className={`
+                flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors
+                ${activeFilterCount > 0 
+                  ? 'border-blue-500 bg-blue-50 text-blue-800' 
+                  : 'border-gray-300 hover:bg-gray-50 text-gray-800'
+                }
+              `}
             >
-              Rensa
+              <Filter className="w-4 h-4" />
+              <span className="text-sm font-medium">Filter</span>
+              {activeFilterCount > 0 && (
+                <span className="bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {activeFilterCount}
+                </span>
+              )}
             </button>
-          )}
+
+            {/* Clear Filters */}
+            {activeFilterCount > 0 && (
+              <button
+                onClick={clearAllFilters}
+                className="text-sm text-gray-700 hover:text-gray-900 transition-colors font-medium"
+              >
+                Rensa
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Event Count */}
