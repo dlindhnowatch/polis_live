@@ -55,7 +55,7 @@ export default function Filters({ filters, onFiltersChange, eventCount }: Filter
               placeholder="Sök händelser, platser, typ..."
               value={localFilters.searchQuery || ''}
               onChange={(e) => handleFilterChange({ searchQuery: e.target.value })}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-900 placeholder-gray-600"
             />
             {localFilters.searchQuery && (
               <button
@@ -151,7 +151,7 @@ export default function Filters({ filters, onFiltersChange, eventCount }: Filter
                 onChange={(e) => handleFilterChange({ 
                   dateTime: e.target.value 
                 })}
-                className="px-3 py-2 text-sm rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="px-3 py-2 text-sm rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
               />
             </div>
           </div>
@@ -167,7 +167,7 @@ export default function Filters({ filters, onFiltersChange, eventCount }: Filter
               placeholder="t.ex. Stockholm, Göteborg, Malmö"
               value={localFilters.locationName || ''}
               onChange={(e) => handleFilterChange({ locationName: e.target.value })}
-              className="w-full px-3 py-2 text-sm rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 text-sm rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-600"
             />
             <p className="text-xs text-gray-700 mt-1">
               Separera flera platser med semicolon (;)
@@ -227,7 +227,7 @@ export default function Filters({ filters, onFiltersChange, eventCount }: Filter
                 placeholder="Eller skriv egen typ (separera med ;)"
                 value={localFilters.eventType || ''}
                 onChange={(e) => handleFilterChange({ eventType: e.target.value })}
-                className="w-full px-3 py-2 text-sm rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 text-sm rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-600"
               />
             </div>
           </div>

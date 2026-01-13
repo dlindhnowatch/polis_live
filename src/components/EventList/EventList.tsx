@@ -84,8 +84,8 @@ export default function EventList({
         <div className="p-4 space-y-3">
           {events.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-500">Inga händelser hittades</p>
-              <p className="text-sm text-gray-400 mt-1">
+              <p className="text-gray-700">Inga händelser hittades</p>
+              <p className="text-sm text-gray-600 mt-1">
                 Prova att justera dina filter
               </p>
             </div>
@@ -105,7 +105,7 @@ export default function EventList({
       {/* Footer with stats */}
       {events.length > 0 && (
         <div className="p-4 border-t border-gray-200 bg-white">
-          <div className="flex justify-between text-xs text-gray-600">
+          <div className="flex justify-between text-xs text-gray-700">
             <span>Senaste uppdatering</span>
             <span>{new Date().toLocaleTimeString('sv-SE')}</span>
           </div>

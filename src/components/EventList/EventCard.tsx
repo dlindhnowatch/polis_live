@@ -40,7 +40,7 @@ export default function EventCard({ event, isSelected, onClick }: EventCardProps
             <h3 className="font-semibold text-gray-900 text-sm leading-tight">
               {event.type}
             </h3>
-            <span className="text-xs text-gray-500 flex-shrink-0">
+            <span className="text-xs text-gray-600 flex-shrink-0">
               #{event.id}
             </span>
           </div>

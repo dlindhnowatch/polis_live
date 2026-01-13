@@ -82,13 +82,13 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
               <h2 className="text-xl font-semibold text-gray-900">
                 {event.type}
               </h2>
-              <span className="text-sm text-gray-500">#{event.id}</span>
+              <span className="text-sm text-gray-600">#{event.id}</span>
             </div>
             
             <div className="flex items-center gap-2">
               <button
                 onClick={handleShare}
-                className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
                 title="Dela händelse"
               >
                 <Share2 className="w-5 h-5" />
@@ -96,7 +96,7 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
               
               <button
                 onClick={onClose}
-                className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
                 title="Stäng"
               >
                 <X className="w-5 h-5" />
@@ -120,21 +120,21 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
               {/* Location and Time */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
+                  <MapPin className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-medium text-gray-900">Plats</p>
-                    <p className="text-gray-600">{event.location.name}</p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-gray-700">{event.location.name}</p>
+                    <p className="text-xs text-gray-600 mt-1">
                       {event.location.gps}
                     </p>
                   </div>
                 </div>
                 
                 <div className="flex items-start gap-3">
-                  <Clock className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
+                  <Clock className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-medium text-gray-900">Tid</p>
-                    <p className="text-gray-600">{formatDateTime(event.datetime)}</p>
+                    <p className="text-gray-700">{formatDateTime(event.datetime)}</p>
                   </div>
                 </div>
               </div>
@@ -193,7 +193,7 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
                 />
                 <div>
                   <p className="font-medium text-gray-800">{event.type}</p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-700">
                     Händelse rapporterad till Polisen
                   </p>
                 </div>
@@ -203,7 +203,7 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
           
           {/* Footer */}
           <div className="border-t border-gray-200 p-6 bg-gray-50">
-            <div className="flex items-center justify-between text-sm text-gray-600">
+            <div className="flex items-center justify-between text-sm text-gray-700">
               <p>
                 Data från{' '}
                 <a 
