@@ -73,8 +73,8 @@ export default function Filters({ filters, onFiltersChange, eventCount }: Filter
             className={`
               flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors
               ${activeFilterCount > 0 
-                ? 'border-blue-500 bg-blue-50 text-blue-700' 
-                : 'border-gray-300 hover:bg-gray-50'
+                ? 'border-blue-500 bg-blue-50 text-blue-800' 
+                : 'border-gray-300 hover:bg-gray-50 text-gray-800'
               }
             `}
           >
@@ -91,7 +91,7 @@ export default function Filters({ filters, onFiltersChange, eventCount }: Filter
           {activeFilterCount > 0 && (
             <button
               onClick={clearAllFilters}
-              className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+              className="text-sm text-gray-700 hover:text-gray-900 transition-colors font-medium"
             >
               Rensa
             </button>
@@ -112,7 +112,7 @@ export default function Filters({ filters, onFiltersChange, eventCount }: Filter
         <div className="border-t border-gray-100 p-4 space-y-4">
           {/* Date Filter */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-800 mb-2">
               <Calendar className="w-4 h-4" />
               Datum
             </label>
@@ -158,7 +158,7 @@ export default function Filters({ filters, onFiltersChange, eventCount }: Filter
 
           {/* Location Filter */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-800 mb-2">
               <MapPin className="w-4 h-4" />
               Plats
             </label>
@@ -169,14 +169,14 @@ export default function Filters({ filters, onFiltersChange, eventCount }: Filter
               onChange={(e) => handleFilterChange({ locationName: e.target.value })}
               className="w-full px-3 py-2 text-sm rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-700 mt-1">
               Separera flera platser med semicolon (;)
             </p>
           </div>
 
           {/* Event Type Filter */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-800 mb-2">
               <Tag className="w-4 h-4" />
               Händelsetyp
             </label>
