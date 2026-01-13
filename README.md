@@ -1,36 +1,43 @@
-# Swedish Police Events Map
+# Daniels Polisradar 🚔
 
-A professional, interactive web application that displays the latest 500 police events from the Swedish Police API on a map with detailed event information.
+A professional, interactive web application that displays real-time police events from the Swedish Police API with an engaging map interface and comprehensive filtering capabilities.
 
-![Swedish Police Events Map](https://img.shields.io/badge/Status-Active-green) ![Next.js](https://img.shields.io/badge/Framework-Next.js%2014+-blue) ![TypeScript](https://img.shields.io/badge/Language-TypeScript-blue)
+![Swedish Police Events Map](https://img.shields.io/badge/Status-Live-green) ![Next.js](https://img.shields.io/badge/Framework-Next.js%2014+-blue) ![TypeScript](https://img.shields.io/badge/Language-TypeScript-blue) ![Mobile](https://img.shields.io/badge/Mobile-Optimized-purple)
 
-## 🚀 Features
+## 🌟 Features
 
 ### Core Features
-- **Interactive Map**: Sweden-centered map displaying police events with custom markers
-- **Real-time Data**: Fetches the latest 500 events from polisen.se API
-- **Event Filtering**: Advanced filters by date, location, and event type
-- **Search Functionality**: Search across event descriptions and locations
-- **Event Details**: Detailed modal view with full event information
-- **Responsive Design**: Works on desktop, tablet, and mobile devices
+- **🗺️ Interactive Map**: Sweden-centered Leaflet map with custom police event markers
+- **📱 Mobile-First Design**: Responsive design with dedicated mobile view toggle
+- **🔄 Real-time Updates**: Auto-refreshing police events every 10 minutes
+- **🔍 Advanced Filtering**: Filter by date, location, and event type
+- **📍 Event Details**: Comprehensive modal view with full event information
+- **📰 Live News Ticker**: Animated ticker showing latest police events
+- **🎯 Touch-Optimized**: Mobile-friendly controls and interactions
+
+### Mobile Experience
+- **View Toggle**: Seamless switching between map and list views on mobile
+- **Touch Controls**: Optimized map controls for mobile devices
+- **Bottom Sheet**: Mobile-friendly event details presentation
+- **Fixed Header**: Logo and live ticker always visible
 
 ### Technical Features
-- **Marker Clustering**: Automatically groups nearby events for better performance
-- **Color-coded Events**: Visual distinction between different event types
-- **Auto-refresh**: Periodic data updates every 10 minutes
-- **Error Handling**: Graceful error handling with retry functionality
-- **SEO Optimized**: Proper meta tags and structured data
+- **🔗 Marker Clustering**: Groups nearby events for better performance
+- **🎨 Color-coded Events**: Visual distinction between different event types
+- **⚡ Performance Optimized**: Lazy loading and efficient state management
+- **🛡️ Error Handling**: Graceful error handling with retry functionality
+- **🔍 SEO Ready**: Proper meta tags and structured data
 
 ## 🛠 Technology Stack
 
 - **Framework**: Next.js 14+ with App Router
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Maps**: Leaflet with React Leaflet
-- **State Management**: Zustand
-- **Data Fetching**: TanStack Query (React Query)
-- **Icons**: Lucide React
-- **Deployment Ready**: Optimized for Vercel/Netlify
+- **Styling**: Tailwind CSS with mobile-first approach
+- **Maps**: Leaflet with React Leaflet for interactive mapping
+- **State Management**: Zustand for lightweight state management
+- **Data Fetching**: TanStack Query with caching and auto-refresh
+- **Icons**: Lucide React for consistent iconography
+- **Animations**: Custom CSS animations and transitions
 
 ## 📦 Installation
 
@@ -82,20 +89,21 @@ A professional, interactive web application that displays the latest 500 police 
 ```
 src/
 ├── app/                    # Next.js App Router
-│   ├── globals.css        # Global styles
-│   ├── layout.tsx         # Root layout
+│   ├── globals.css        # Global styles with animations
+│   ├── layout.tsx         # Root layout with metadata
 │   └── page.tsx           # Home page
 ├── components/            # React components
-│   ├── App.tsx           # Main application component
-│   ├── EventList/        # Event list components
-│   ├── Filters/          # Filter components
-│   ├── Map/              # Map components
-│   └── Modal/            # Modal components
-├── hooks/                # Custom React hooks
-├── services/             # API services
-├── store/                # Zustand store
+│   ├── App.tsx           # Main app with mobile/desktop layouts
+│   ├── EventList/        # Event list with mobile optimization
+│   ├── Filters/          # Advanced filtering interface
+│   ├── Logo/             # Animated header with news ticker
+│   ├── Map/              # Interactive map with touch controls
+│   └── Modal/            # Event details modal
+├── hooks/                # Custom React hooks for data fetching
+├── services/             # API services and data transformation
+├── store/                # Zustand store with mobile view state
 ├── types/                # TypeScript interfaces
-└── utils/                # Utility functions
+└── utils/                # Utility functions and helpers
 ```
 
 ## 📖 API Information
@@ -143,21 +151,7 @@ The application supports various event types with distinct colors:
 | Rån | #E74C3C | Banknote |
 | And more... | | |
 
-## 🚀 Deployment
-
-### Vercel (Recommended)
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Deploy automatically
-
-### Netlify
-1. Build the application: `npm run build`
-2. Deploy the `out` folder to Netlify
-
-### Other Platforms
-The application is a standard Next.js app and can be deployed to any platform supporting Node.js.
-
-## 🔧 Configuration
+##  Configuration
 
 ### Environment Variables
 Create a `.env.local` file for any environment-specific configurations:
@@ -194,14 +188,18 @@ NEXT_PUBLIC_MAP_TILE_URL=https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png
 
 ## 📋 TODO / Future Enhancements
 
-- [ ] Dark mode toggle
-- [ ] Event statistics dashboard
-- [ ] Export functionality (CSV/JSON)
-- [ ] Push notifications for specific areas
-- [ ] Multi-language support (English/Swedish)
-- [ ] Heatmap view
-- [ ] Time-based analytics
-- [ ] Offline support with service worker
+- [x] ✅ Mobile-first responsive design
+- [x] ✅ Interactive map with touch controls
+- [x] ✅ Mobile view toggle (map/list)
+- [x] ✅ Animated logo and news ticker
+- [ ] 🌙 Dark mode toggle
+- [ ] 📊 Event statistics dashboard
+- [ ] 📁 Export functionality (CSV/JSON)
+- [ ] 🔔 Push notifications for specific areas
+- [ ] 🌍 Multi-language support (English/Swedish)
+- [ ] 🔥 Heatmap view
+- [ ] 📈 Time-based analytics
+- [ ] 📱 Progressive Web App (PWA) support
 
 ## ⚖️ License
 
@@ -224,4 +222,4 @@ If you encounter any issues or have questions:
 
 ---
 
-**Built with ❤️ for transparency in public safety information**
+**Daniels Polisradar - Built with ❤️ for transparency in public safety information**
