@@ -45,17 +45,17 @@ export default function EventCard({ event, isSelected, onClick }: EventCardProps
             </span>
           </div>
           
-          <p className="text-sm text-gray-700 mb-3 leading-relaxed">
+          <p className="text-sm text-gray-800 mb-3 leading-relaxed">
             {event.summary}
           </p>
           
           <div className="space-y-1">
-            <div className="flex items-center gap-1.5 text-xs text-gray-600">
+            <div className="flex items-center gap-1.5 text-xs text-gray-700">
               <MapPin className="w-3 h-3 flex-shrink-0" />
               <span className="truncate">{event.location.name}</span>
             </div>
             
-            <div className="flex items-center gap-1.5 text-xs text-gray-600">
+            <div className="flex items-center gap-1.5 text-xs text-gray-700">
               <Clock className="w-3 h-3 flex-shrink-0" />
               <span>{formatDateTime(event.datetime)}</span>
             </div>

@@ -65,7 +65,7 @@ export default function EventList({
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-gray-900">Polishändelser</h2>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-700">
               {events.length} händelser funna
             </p>
           </div>

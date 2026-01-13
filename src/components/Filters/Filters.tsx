@@ -100,7 +100,7 @@ export default function Filters({ filters, onFiltersChange, eventCount }: Filter
 
         {/* Event Count */}
         {eventCount !== undefined && (
-          <div className="mt-2 text-sm text-gray-600">
+          <div className="mt-2 text-sm text-gray-800">
             {eventCount} händelser
             {activeFilterCount > 0 && ' (filtrerade)'}
           </div>
