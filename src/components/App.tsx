@@ -23,6 +23,8 @@ function PoliceEventsApp() {
     setIsSidebarOpen,
     isModalOpen,
     setIsModalOpen,
+    mobileView,
+    setMobileView,
   } = useAppStore();
 
   const { data: events = [], isLoading, error } = usePoliceEvents(filters);
@@ -73,51 +75,85 @@ function PoliceEventsApp() {
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-        {/* Event List Sidebar - Mobile: Bottom Sheet, Desktop: Sidebar */}
-        <aside className={`
-          flex-none transition-all duration-300 ease-in-out z-20
-          lg:flex lg:w-96
-          ${isSidebarOpen 
-            ? 'fixed inset-x-0 bottom-0 h-2/3 lg:relative lg:h-auto lg:inset-auto' 
-            : 'hidden lg:w-auto'
-          }
-        `}>
-          <EventList
-            events={events}
-            selectedEventId={selectedEvent?.id}
-            onEventSelect={handleEventSelect}
-            isLoading={isLoading}
-            isCollapsed={!isSidebarOpen}
-            onToggleCollapse={() => setIsSidebarOpen(!isSidebarOpen)}
-          />
-        </aside>
-
-        {/* Map */}
-        <section className="flex-1 relative">
-          <EventMap
-            events={events}
-            selectedEventId={selectedEvent?.id}
-            onEventSelect={handleEventSelect}
-          />
-          
-          {/* Mobile: Floating Action Button to toggle sidebar */}
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="lg:hidden fixed bottom-4 right-4 z-30 bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg transition-colors"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-          
-          {/* Mobile: Backdrop overlay */}
-          {isSidebarOpen && (
-            <div 
-              className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-10"
-              onClick={() => setIsSidebarOpen(false)}
+        {/* Desktop Layout: Side by side */}
+        <div className="hidden lg:flex lg:flex-1">
+          {/* Event List Sidebar - Desktop only */}
+          <aside className={`
+            flex-none transition-all duration-300 ease-in-out
+            lg:flex lg:w-96
+            ${isSidebarOpen ? '' : 'lg:w-auto'}
+          `}>
+            <EventList
+              events={events}
+              selectedEventId={selectedEvent?.id}
+              onEventSelect={handleEventSelect}
+              isLoading={isLoading}
+              isCollapsed={!isSidebarOpen}
+              onToggleCollapse={() => setIsSidebarOpen(!isSidebarOpen)}
             />
+          </aside>
+
+          {/* Map - Desktop */}
+          <section className="flex-1 relative">
+            <EventMap
+              events={events}
+              selectedEventId={selectedEvent?.id}
+              onEventSelect={handleEventSelect}
+            />
+          </section>
+        </div>
+
+        {/* Mobile Layout: Toggle between map and list */}
+        <div className="flex-1 lg:hidden relative">
+          {/* Mobile View Toggle Buttons */}
+          <div className="absolute top-4 left-4 right-4 z-30 flex bg-white rounded-lg shadow-lg p-1">
+            <button
+              onClick={() => setMobileView('list')}
+              className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                mobileView === 'list'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              Lista
+            </button>
+            <button
+              onClick={() => setMobileView('map')}
+              className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                mobileView === 'map'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              Karta
+            </button>
+          </div>
+
+          {/* Mobile List View */}
+          {mobileView === 'list' && (
+            <div className="h-full">
+              <EventList
+                events={events}
+                selectedEventId={selectedEvent?.id}
+                onEventSelect={handleEventSelect}
+                isLoading={isLoading}
+                isCollapsed={false}
+                onToggleCollapse={() => {}}
+              />
+            </div>
           )}
-        </section>
+
+          {/* Mobile Map View */}
+          {mobileView === 'map' && (
+            <div className="h-full">
+              <EventMap
+                events={events}
+                selectedEventId={selectedEvent?.id}
+                onEventSelect={handleEventSelect}
+              />
+            </div>
+          )}
+        </div>
       </main>
 
       {/* Event Detail Modal */}

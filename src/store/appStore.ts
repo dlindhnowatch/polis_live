@@ -30,6 +30,9 @@ interface AppStore {
   setIsSidebarOpen: (open: boolean) => void;
   isModalOpen: boolean;
   setIsModalOpen: (open: boolean) => void;
+  // Mobile view toggle (map or list)
+  mobileView: 'map' | 'list';
+  setMobileView: (view: 'map' | 'list') => void;
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({
@@ -67,4 +70,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   setIsSidebarOpen: (isSidebarOpen) => set({ isSidebarOpen }),
   isModalOpen: false,
   setIsModalOpen: (isModalOpen) => set({ isModalOpen }),
+  // Mobile view toggle
+  mobileView: 'list',
+  setMobileView: (mobileView) => set({ mobileView }),
 }));
