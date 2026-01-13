@@ -104,55 +104,60 @@ function PoliceEventsApp() {
         </div>
 
         {/* Mobile Layout: Toggle between map and list */}
-        <div className="flex-1 lg:hidden relative">
+        <div className="flex-1 lg:hidden flex flex-col">
           {/* Mobile View Toggle Buttons */}
-          <div className="absolute top-4 left-4 right-4 z-30 flex bg-white rounded-lg shadow-lg p-1">
-            <button
-              onClick={() => setMobileView('list')}
-              className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                mobileView === 'list'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-700 hover:bg-gray-100'
-              }`}
-            >
-              Lista
-            </button>
-            <button
-              onClick={() => setMobileView('map')}
-              className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                mobileView === 'map'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-700 hover:bg-gray-100'
-              }`}
-            >
-              Karta
-            </button>
+          <div className="flex-none bg-white shadow-lg m-4 rounded-lg p-1 z-30">
+            <div className="flex">
+              <button
+                onClick={() => setMobileView('list')}
+                className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  mobileView === 'list'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                Lista
+              </button>
+              <button
+                onClick={() => setMobileView('map')}
+                className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  mobileView === 'map'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                Karta
+              </button>
+            </div>
           </div>
 
-          {/* Mobile List View */}
-          {mobileView === 'list' && (
-            <div className="h-full">
-              <EventList
-                events={events}
-                selectedEventId={selectedEvent?.id}
-                onEventSelect={handleEventSelect}
-                isLoading={isLoading}
-                isCollapsed={false}
-                onToggleCollapse={() => {}}
-              />
-            </div>
-          )}
+          {/* Mobile Content Area */}
+          <div className="flex-1 mx-4 mb-4 overflow-hidden">
+            {/* Mobile List View */}
+            {mobileView === 'list' && (
+              <div className="h-full">
+                <EventList
+                  events={events}
+                  selectedEventId={selectedEvent?.id}
+                  onEventSelect={handleEventSelect}
+                  isLoading={isLoading}
+                  isCollapsed={false}
+                  onToggleCollapse={() => {}}
+                />
+              </div>
+            )}
 
-          {/* Mobile Map View */}
-          {mobileView === 'map' && (
-            <div className="h-full">
-              <EventMap
-                events={events}
-                selectedEventId={selectedEvent?.id}
-                onEventSelect={handleEventSelect}
-              />
-            </div>
-          )}
+            {/* Mobile Map View */}
+            {mobileView === 'map' && (
+              <div className="h-full rounded-lg overflow-hidden">
+                <EventMap
+                  events={events}
+                  selectedEventId={selectedEvent?.id}
+                  onEventSelect={handleEventSelect}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </main>
 
