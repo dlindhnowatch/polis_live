@@ -117,6 +117,15 @@ body {
   animation: spin-slow 8s linear infinite;
 }
 
+.animate-scroll {
+  animation: scroll 30s linear infinite;
+}
+
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
 .radar-sweep {
   width: 2px;
   height: 100%;

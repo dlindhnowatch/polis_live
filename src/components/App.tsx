@@ -9,7 +9,6 @@ import EventList from '@/components/EventList/EventList';
 import Filters from '@/components/Filters/Filters';
 import EventModal from '@/components/Modal/EventModal';
 import Logo from '@/components/Logo/Logo';
-import LatestNews from '@/components/LatestNews/LatestNews';
 import { PoliceEvent } from '@/types/police';
 
 const queryClient = new QueryClient();
@@ -64,21 +63,13 @@ function PoliceEventsApp() {
     <div className="h-screen flex flex-col bg-gray-100">
       {/* Header with Logo and Filters */}
       <header className="flex-none">
-        <Logo />
+        <Logo events={events} onEventSelect={handleEventSelect} />
         <Filters
           filters={filters}
           onFiltersChange={setFilters}
           eventCount={events.length}
         />
       </header>
-
-      {/* Latest News Section */}
-      <section className="flex-none mx-4 my-4">
-        <LatestNews 
-          events={events} 
-          onEventSelect={handleEventSelect}
-        />
-      </section>
 
       {/* Main Content */}
       <main className="flex-1 flex overflow-hidden">
