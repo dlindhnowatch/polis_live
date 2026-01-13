@@ -80,8 +80,6 @@ export default function EventMapClient({ events, selectedEventId, onEventSelect 
         scrollWheelZoom={true}
         doubleClickZoom={true}
         dragging={true}
-        tap={true}
-        touchExtend={true}
         bounceAtZoomLimits={true}
         preferCanvas={true}
       >
