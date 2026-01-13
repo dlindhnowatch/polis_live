@@ -171,8 +171,8 @@ export default function EventMapClient({ events, selectedEventId, onEventSelect 
         <button
           className="bg-white p-3 md:p-2 rounded-lg shadow-md hover:bg-gray-50 transition-colors touch-manipulation"
           onClick={() => {
-            const map = document.querySelector('.leaflet-container').__map;
-            if (map) map.zoomIn();
+            const container = document.querySelector('.leaflet-container') as any;
+            if (container?.__map) container.__map.zoomIn();
           }}
           title="Zooma in"
         >
@@ -185,8 +185,8 @@ export default function EventMapClient({ events, selectedEventId, onEventSelect 
         <button
           className="bg-white p-3 md:p-2 rounded-lg shadow-md hover:bg-gray-50 transition-colors touch-manipulation"
           onClick={() => {
-            const map = document.querySelector('.leaflet-container').__map;
-            if (map) map.zoomOut();
+            const container = document.querySelector('.leaflet-container') as any;
+            if (container?.__map) container.__map.zoomOut();
           }}
           title="Zooma ut"
         >
@@ -199,9 +199,9 @@ export default function EventMapClient({ events, selectedEventId, onEventSelect 
         <button
           className="bg-white p-3 md:p-2 rounded-lg shadow-md hover:bg-gray-50 transition-colors touch-manipulation"
           onClick={() => {
-            const map = document.querySelector('.leaflet-container').__map;
-            if (map) {
-              map.setView([62.0, 15.0], 5);
+            const container = document.querySelector('.leaflet-container') as any;
+            if (container?.__map) {
+              container.__map.setView([62.0, 15.0], 5);
             }
           }}
           title="Återställ vy"
@@ -217,9 +217,9 @@ export default function EventMapClient({ events, selectedEventId, onEventSelect 
           onClick={() => {
             if (navigator.geolocation) {
               navigator.geolocation.getCurrentPosition((position) => {
-                const map = document.querySelector('.leaflet-container').__map;
-                if (map) {
-                  map.setView([position.coords.latitude, position.coords.longitude], 10);
+                const container = document.querySelector('.leaflet-container') as any;
+                if (container?.__map) {
+                  container.__map.setView([position.coords.latitude, position.coords.longitude], 10);
                 }
               });
             }
