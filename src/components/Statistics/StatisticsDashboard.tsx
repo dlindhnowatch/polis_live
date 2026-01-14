@@ -313,7 +313,7 @@ function StatisticsDashboardContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       {/* Header */}
       <header className="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -464,8 +464,10 @@ function StatisticsDashboardContent() {
 
 export default function StatisticsDashboard() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <StatisticsDashboardContent />
-    </QueryClientProvider>
+    <div className="statistics-dashboard">
+      <QueryClientProvider client={queryClient}>
+        <StatisticsDashboardContent />
+      </QueryClientProvider>
+    </div>
   );
 }

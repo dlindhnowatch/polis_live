@@ -38,10 +38,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="sv">
-      <body className={`${inter.className} overflow-hidden lg:overflow-auto`} suppressHydrationWarning>
-        <div id="__next" className="h-screen overflow-hidden">
-          {children}
-        </div>
+      <body className={`${inter.className}`} suppressHydrationWarning>
+        {children}
       </body>
     </html>
   );
