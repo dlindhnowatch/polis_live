@@ -1,17 +1,18 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import useNotificationStore from '@/store/notificationStore';
+import { useHydratedNotificationStore } from '@/hooks/useHydratedNotificationStore';
 import { X, Bell, MapPin } from 'lucide-react';
 
 export default function NotificationToast() {
-  const alerts = useNotificationStore((state) => state.alerts);
-  const dismissAlert = useNotificationStore((state) => state.dismissAlert);
+  const { alerts, dismissAlert, isHydrated } = useHydratedNotificationStore();
   
   const [visibleAlerts, setVisibleAlerts] = useState<string[]>([]);
   
   // Show new alerts for a limited time
   useEffect(() => {
+    if (!isHydrated) return;
+    
     const newAlerts = alerts
       .filter(alert => !alert.dismissed)
       .slice(0, 3) // Show max 3 toasts at once
@@ -25,7 +26,12 @@ export default function NotificationToast() {
         setVisibleAlerts(prev => prev.filter(id => id !== alertId));
       }, 5000);
     });
-  }, [alerts]);
+  }, [alerts, isHydrated]);
+  
+  // Don't render anything until hydrated
+  if (!isHydrated) {
+    return null;
+  }
   
   const activeToasts = alerts.filter(alert => 
     !alert.dismissed && visibleAlerts.includes(alert.id)

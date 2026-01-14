@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import useNotificationStore from '@/store/notificationStore';
+import { useHydratedNotificationStore } from '@/hooks/useHydratedNotificationStore';
 import { SWEDISH_REGIONS, REGION_DISPLAY_NAMES } from '@/utils/regions';
 import {
   Bell,
@@ -30,7 +30,8 @@ export default function NotificationPanel() {
     clearAllAlerts,
     toggleAudio,
     setNotificationPanelOpen,
-  } = useNotificationStore();
+    isHydrated,
+  } = useHydratedNotificationStore();
 
   const [showAddRule, setShowAddRule] = useState(false);
   const [newRule, setNewRule] = useState({
@@ -42,6 +43,19 @@ export default function NotificationPanel() {
 
   const activeAlerts = alerts.filter(alert => !alert.dismissed);
   const hasActiveAlerts = activeAlerts.length > 0;
+
+  // Don't render until hydrated to avoid SSR mismatch
+  if (!isHydrated) {
+    return (
+      <button
+        className="fixed top-4 right-4 z-50 p-3 rounded-full shadow-lg bg-white hover:bg-gray-50 text-gray-700 border border-gray-200"
+        title="Loading notifications..."
+        disabled
+      >
+        <BellOff className="w-6 h-6" />
+      </button>
+    );
+  }
 
   const handleAddRule = () => {
     if (newRule.name && newRule.value) {
