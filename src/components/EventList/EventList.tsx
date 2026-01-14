@@ -11,6 +11,7 @@ interface EventListProps {
   isLoading?: boolean;
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
+  isMobile?: boolean;
 }
 
 export default function EventList({ 
@@ -19,7 +20,8 @@ export default function EventList({
   onEventSelect, 
   isLoading,
   isCollapsed,
-  onToggleCollapse
+  onToggleCollapse,
+  isMobile = false
 }: EventListProps) {
   if (isLoading) {
     return (
@@ -59,9 +61,9 @@ export default function EventList({
   }
 
   return (
-    <div className="h-full bg-gray-50 border-r border-gray-200 flex flex-col">
+    <div className={`h-full bg-gray-50 flex flex-col ${isMobile ? '' : 'border-r border-gray-200'}`}>
       {/* Header */}
-      <div className="p-4 border-b border-gray-200 bg-white">
+      <div className="flex-none p-4 border-b border-gray-200 bg-white">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-gray-900">Polishändelser</h2>
@@ -69,18 +71,26 @@ export default function EventList({
               {events.length} händelser funna
             </p>
           </div>
-          <button
-            onClick={onToggleCollapse}
-            className="p-1.5 hover:bg-gray-100 rounded-md transition-colors"
-            title="Dölj händelselista"
-          >
-            <ChevronLeft className="w-4 h-4 text-gray-600" />
-          </button>
+          {!isMobile && (
+            <button
+              onClick={onToggleCollapse}
+              className="p-1.5 hover:bg-gray-100 rounded-md transition-colors"
+              title="Dölj händelselista"
+            >
+              <ChevronLeft className="w-4 h-4 text-gray-600" />
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Event List */}
-      <div className="flex-1 overflow-y-auto">
+      {/* Event List - with proper mobile scrolling */}
+      <div 
+        className="flex-1 overflow-y-auto overscroll-contain"
+        style={{ 
+          WebkitOverflowScrolling: 'touch',
+          touchAction: 'pan-y'
+        }}
+      >
         <div className="p-4 space-y-3">
           {events.length === 0 ? (
             <div className="text-center py-8">
@@ -104,7 +114,7 @@ export default function EventList({
 
       {/* Footer with stats */}
       {events.length > 0 && (
-        <div className="p-4 border-t border-gray-200 bg-white">
+        <div className="flex-none p-4 border-t border-gray-200 bg-white">
           <div className="flex justify-between text-xs text-gray-700">
             <span>Senaste uppdatering</span>
             <span>{new Date().toLocaleTimeString('sv-SE')}</span>

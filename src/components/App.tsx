@@ -135,7 +135,7 @@ function PoliceEventsApp() {
           <div className="flex-1 mx-4 mb-4 overflow-hidden">
             {/* Mobile List View */}
             {mobileView === 'list' && (
-              <div className="h-full">
+              <div className="h-full overflow-hidden rounded-lg">
                 <EventList
                   events={events}
                   selectedEventId={selectedEvent?.id}
@@ -143,6 +143,7 @@ function PoliceEventsApp() {
                   isLoading={isLoading}
                   isCollapsed={false}
                   onToggleCollapse={() => {}}
+                  isMobile={true}
                 />
               </div>
             )}

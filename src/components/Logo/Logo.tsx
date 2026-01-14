@@ -1,8 +1,9 @@
 'use client';
 
-import { Shield, Radar, Clock, MapPin } from 'lucide-react';
+import { Shield, Radar, Clock, MapPin, BarChart3 } from 'lucide-react';
 import { PoliceEvent } from '@/types/police';
 import { getEventTypeInfo, formatDateTime } from '@/utils/eventHelpers';
+import Link from 'next/link';
 
 interface LogoProps {
   events?: PoliceEvent[];
@@ -42,12 +43,21 @@ export default function Logo({ events = [], onEventSelect }: LogoProps) {
       {/* Mobile layout */}
       <div className="block md:hidden relative px-4 py-3 z-10">
         {/* Mobile logo */}
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <Shield className="w-6 h-6 text-blue-300 animate-pulse" />
-          <h1 className="text-xl font-bold text-white">
-            Daniels polisradar
-          </h1>
-          <Radar className="w-6 h-6 text-blue-300 animate-ping" />
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <Shield className="w-6 h-6 text-blue-300 animate-pulse" />
+            <h1 className="text-xl font-bold text-white">
+              Daniels polisradar
+            </h1>
+            <Radar className="w-6 h-6 text-blue-300 animate-ping" />
+          </div>
+          <Link
+            href="/statistics"
+            className="flex items-center gap-1 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-colors"
+          >
+            <BarChart3 className="w-4 h-4 text-blue-300" />
+            <span className="text-sm font-medium text-white">Statistik</span>
+          </Link>
         </div>
         
         {/* Mobile ticker - simplified */}
@@ -91,6 +101,15 @@ export default function Logo({ events = [], onEventSelect }: LogoProps) {
                 <Shield className="w-8 h-8 text-blue-400 animate-pulse opacity-60" />
               </div>
             </div>
+            
+            {/* Statistics Link */}
+            <Link
+              href="/statistics"
+              className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors ml-4"
+            >
+              <BarChart3 className="w-5 h-5 text-blue-300" />
+              <span className="font-medium text-white">Statistik</span>
+            </Link>
           </div>
 
           {/* News ticker */}
