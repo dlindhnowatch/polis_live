@@ -132,10 +132,10 @@ function PoliceEventsApp() {
           </div>
 
           {/* Mobile Content Area */}
-          <div className="flex-1 mx-4 mb-4 overflow-hidden">
+          <div className="flex-1 mx-4 mb-4 flex flex-col">
             {/* Mobile List View */}
             {mobileView === 'list' && (
-              <div className="h-full overflow-hidden rounded-lg">
+              <div className="flex-1 flex flex-col rounded-lg bg-white shadow-lg overflow-hidden">
                 <EventList
                   events={events}
                   selectedEventId={selectedEvent?.id}

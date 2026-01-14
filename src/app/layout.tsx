@@ -26,6 +26,9 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({
@@ -35,8 +38,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="sv">
-      <body className={inter.className}>
-        {children}
+      <body className={`${inter.className} overflow-hidden lg:overflow-auto`} suppressHydrationWarning>
+        <div id="__next" className="h-screen overflow-hidden">
+          {children}
+        </div>
       </body>
     </html>
   );

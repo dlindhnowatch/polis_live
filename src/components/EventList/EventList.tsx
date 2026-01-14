@@ -85,10 +85,14 @@ export default function EventList({
 
       {/* Event List - with proper mobile scrolling */}
       <div 
-        className="flex-1 overflow-y-auto overscroll-contain"
+        className={`flex-1 overflow-y-auto ${isMobile ? 'overscroll-contain' : ''}`}
         style={{ 
           WebkitOverflowScrolling: 'touch',
-          touchAction: 'pan-y'
+          touchAction: isMobile ? 'pan-y' : 'auto',
+          ...(isMobile && { 
+            minHeight: 0,
+            height: '100%'
+          })
         }}
       >
         <div className="p-4 space-y-3">
