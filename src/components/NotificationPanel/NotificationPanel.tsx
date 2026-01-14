@@ -43,6 +43,8 @@ export default function NotificationPanel() {
 
   const activeAlerts = alerts.filter(alert => !alert.dismissed);
   const hasActiveAlerts = activeAlerts.length > 0;
+  const hasEnabledRules = rules.some(rule => rule.enabled);
+  const showActiveBell = hasActiveAlerts || hasEnabledRules;
 
   // Don't render until hydrated to avoid SSR mismatch
   if (!isHydrated) {
@@ -58,15 +60,10 @@ export default function NotificationPanel() {
   }
 
   const handleAddRule = () => {
-    console.log('handleAddRule called with:', newRule);
     if (newRule.name && newRule.value) {
-      console.log('Adding rule:', newRule);
       addRule(newRule);
       setNewRule({ name: '', type: 'region', value: '', enabled: true });
       setShowAddRule(false);
-      console.log('Rule added successfully');
-    } else {
-      console.log('Form validation failed - missing name or value');
     }
   };
 
@@ -82,13 +79,15 @@ export default function NotificationPanel() {
       <button
         onClick={() => setNotificationPanelOpen(!isNotificationPanelOpen)}
         className={`fixed top-4 right-4 z-[9999] p-3 rounded-full shadow-lg transition-all duration-300 ${
-          hasActiveAlerts 
-            ? 'bg-red-500 hover:bg-red-600 text-white animate-pulse' 
+          showActiveBell
+            ? hasActiveAlerts 
+              ? 'bg-red-500 hover:bg-red-600 text-white animate-pulse' 
+              : 'bg-blue-500 hover:bg-blue-600 text-white'
             : 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-200'
         }`}
         title="Notifications"
       >
-        {hasActiveAlerts ? <Bell className="w-6 h-6" /> : <BellOff className="w-6 h-6" />}
+        {showActiveBell ? <Bell className="w-6 h-6" /> : <BellOff className="w-6 h-6" />}
         {hasActiveAlerts && (
           <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
             {activeAlerts.length}
