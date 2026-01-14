@@ -4,11 +4,14 @@ import { useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAppStore } from '@/store/appStore';
 import { usePoliceEvents } from '@/hooks/usePoliceEvents';
+import { useNotificationChecker } from '@/hooks/useNotificationChecker';
 import EventMap from '@/components/Map/EventMap';
 import EventList from '@/components/EventList/EventList';
 import Filters from '@/components/Filters/Filters';
 import EventModal from '@/components/Modal/EventModal';
 import Logo from '@/components/Logo/Logo';
+import NotificationPanel from '@/components/NotificationPanel/NotificationPanel';
+import NotificationToast from '@/components/NotificationPanel/NotificationToast';
 import { PoliceEvent } from '@/types/police';
 
 const queryClient = new QueryClient();
@@ -28,6 +31,9 @@ function PoliceEventsApp() {
   } = useAppStore();
 
   const { data: events = [], isLoading, error } = usePoliceEvents(filters);
+
+  // Check for new events that match notification rules
+  useNotificationChecker(events);
 
   const handleEventSelect = (event: PoliceEvent) => {
     console.log('Event selected in App:', event.id, event.type);
@@ -168,6 +174,12 @@ function PoliceEventsApp() {
         isOpen={isModalOpen}
         onClose={handleModalClose}
       />
+
+      {/* Notification Panel */}
+      <NotificationPanel />
+      
+      {/* Notification Toasts */}
+      <NotificationToast />
     </div>
   );
 }
