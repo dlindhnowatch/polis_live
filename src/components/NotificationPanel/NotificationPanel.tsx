@@ -76,7 +76,7 @@ export default function NotificationPanel() {
       {/* Notification Toggle Button */}
       <button
         onClick={() => setNotificationPanelOpen(!isNotificationPanelOpen)}
-        className={`fixed top-4 right-4 z-50 p-3 rounded-full shadow-lg transition-all duration-300 ${
+        className={`fixed top-4 right-4 z-[9999] p-3 rounded-full shadow-lg transition-all duration-300 ${
           hasActiveAlerts 
             ? 'bg-red-500 hover:bg-red-600 text-white animate-pulse' 
             : 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-200'
@@ -93,12 +93,12 @@ export default function NotificationPanel() {
 
       {/* Notification Panel */}
       {isNotificationPanelOpen && (
-        <div className="fixed inset-0 z-40 flex justify-end">
+        <div className="fixed inset-0 z-[9998] flex justify-end">
           <div 
             className="absolute inset-0 bg-black bg-opacity-50"
             onClick={() => setNotificationPanelOpen(false)}
           />
-          <div className="w-96 bg-white shadow-xl h-full overflow-hidden flex flex-col">
+          <div className="w-96 bg-white shadow-xl h-full overflow-hidden flex flex-col z-[9999]">
             {/* Header */}
             <div className="p-4 border-b border-gray-200 bg-gray-50">
               <div className="flex items-center justify-between">

@@ -42,7 +42,7 @@ export default function NotificationToast() {
   }
   
   return (
-    <div className="fixed top-20 right-4 z-30 space-y-2 pointer-events-none">
+    <div className="fixed top-20 right-4 z-[9997] space-y-2 pointer-events-none">
       {activeToasts.map((alert, index) => (
         <div
           key={alert.id}
