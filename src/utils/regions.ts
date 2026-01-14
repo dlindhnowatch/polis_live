@@ -1,4 +1,4 @@
-import { getAllRegionsWithData, getCitiesForRegion } from './regionMapping';
+import { getAllRegionsWithData, getCitiesForRegion } from './regionMappingSecure';
 
 export const SWEDISH_REGIONS = [
   'Blekinge',
@@ -50,10 +50,10 @@ export const REGION_DISPLAY_NAMES: Record<string, string> = {
   'Östergötland': 'Östergötlands län',
 };
 
-// Get regions that actually have data in the Excel file
-export async function getAvailableRegions(): Promise<string[]> {
+// Get regions that actually have data in the JSON file
+export function getAvailableRegions(): string[] {
   try {
-    return await getAllRegionsWithData();
+    return getAllRegionsWithData();
   } catch (error) {
     console.error('Error getting available regions:', error);
     return SWEDISH_REGIONS.slice(); // fallback to static list
@@ -61,9 +61,9 @@ export async function getAvailableRegions(): Promise<string[]> {
 }
 
 // Get cities for a specific region
-export async function getRegionCities(regionName: string): Promise<string[]> {
+export function getRegionCities(regionName: string): string[] {
   try {
-    return await getCitiesForRegion(regionName);
+    return getCitiesForRegion(regionName);
   } catch (error) {
     console.error('Error getting cities for region:', regionName, error);
     return [];

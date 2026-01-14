@@ -3,8 +3,8 @@
 import { useState, useMemo } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { usePoliceEvents } from '@/hooks/usePoliceEvents';
-import { useRegionMapping } from '@/hooks/useRegionMapping';
-import { SWEDISH_REGIONS, REGION_DISPLAY_NAMES } from '@/utils/regions';
+import { SWEDISH_REGIONS, REGION_DISPLAY_NAMES, getAvailableRegions } from '@/utils/regions';
+import { getRegionForLocation } from '@/utils/regionMappingSecure';
 import { EVENT_TYPE_COLORS, getEventTypeInfo } from '@/utils/eventHelpers';
 import { PoliceEvent } from '@/types/police';
 import Link from 'next/link';
@@ -247,17 +247,25 @@ function StatisticsDashboardContent() {
   const [selectedRegion, setSelectedRegion] = useState<string>('Stockholm');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
-  const { data: allEvents = [], isLoading: eventsLoading } = usePoliceEvents({});
+  const { data: allEvents = [], isLoading } = usePoliceEvents({});
 
-  // Use the region mapping hook
-  const {
-    regionEvents,
-    availableRegions,
-    isLoading: mappingLoading,
-    mappingStats,
-  } = useRegionMapping(allEvents, selectedRegion);
+  // Get available regions that have data
+  const availableRegions = useMemo(() => {
+    try {
+      return getAvailableRegions();
+    } catch (error) {
+      console.error('Error loading available regions:', error);
+      return SWEDISH_REGIONS.slice();
+    }
+  }, []);
 
-  const isLoading = eventsLoading || mappingLoading;
+  // Filter events for selected region using secure mapping
+  const regionEvents = useMemo(() => {
+    return allEvents.filter(event => {
+      const eventRegion = getRegionForLocation(event.location.name);
+      return eventRegion === selectedRegion;
+    });
+  }, [allEvents, selectedRegion]);
 
   // Calculate statistics
   const stats = useMemo(() => {
@@ -451,10 +459,7 @@ function StatisticsDashboardContent() {
           <p>Data hämtas från Polisens öppna API. Statistiken baseras på de senaste 500 händelserna.</p>
           <p className="mt-1">Senast uppdaterad: {new Date().toLocaleString('sv-SE')}</p>
           <p className="mt-1">
-            {regionEvents.length} av {mappingStats.totalEvents} händelser matchade region {REGION_DISPLAY_NAMES[selectedRegion] || selectedRegion}
-          </p>
-          <p className="text-xs text-gray-400 mt-1">
-            Kartläggning: {mappingStats.mappedEvents} mappade, {mappingStats.unmappedEvents} omappade
+            {regionEvents.length} av {allEvents.length} händelser matchade region {REGION_DISPLAY_NAMES[selectedRegion] || selectedRegion}
           </p>
         </div>
       </main>
