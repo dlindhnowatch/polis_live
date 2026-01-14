@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { usePoliceEvents } from '@/hooks/usePoliceEvents';
+import { useRegionMapping } from '@/hooks/useRegionMapping';
 import { SWEDISH_REGIONS, REGION_DISPLAY_NAMES } from '@/utils/regions';
 import { EVENT_TYPE_COLORS, getEventTypeInfo } from '@/utils/eventHelpers';
 import { PoliceEvent } from '@/types/police';
@@ -246,14 +247,17 @@ function StatisticsDashboardContent() {
   const [selectedRegion, setSelectedRegion] = useState<string>('Stockholm');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
-  const { data: allEvents = [], isLoading } = usePoliceEvents({});
+  const { data: allEvents = [], isLoading: eventsLoading } = usePoliceEvents({});
 
-  // Filter events for selected region
-  const regionEvents = useMemo(() => {
-    return allEvents.filter(event => 
-      event.location.name.toLowerCase().includes(selectedRegion.toLowerCase())
-    );
-  }, [allEvents, selectedRegion]);
+  // Use the region mapping hook
+  const {
+    regionEvents,
+    availableRegions,
+    isLoading: mappingLoading,
+    mappingStats,
+  } = useRegionMapping(allEvents, selectedRegion);
+
+  const isLoading = eventsLoading || mappingLoading;
 
   // Calculate statistics
   const stats = useMemo(() => {
@@ -274,10 +278,7 @@ function StatisticsDashboardContent() {
 
     // Get yesterday's events for comparison
     const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-    const yesterdayAllEvents = allEvents.filter(e => 
-      e.datetime.startsWith(yesterday) &&
-      e.location.name.toLowerCase().includes(selectedRegion.toLowerCase())
-    );
+    const yesterdayEvents = regionEvents.filter(e => e.datetime.startsWith(yesterday));
 
     // Most common type
     const mostCommonType = sortedTypes.length > 0 ? sortedTypes[0][0] : 'N/A';
@@ -288,7 +289,7 @@ function StatisticsDashboardContent() {
     return {
       total: regionEvents.length,
       todayCount: todayEvents.length,
-      yesterdayCount: yesterdayAllEvents.length,
+      yesterdayCount: yesterdayEvents.length,
       eventTypeCounts: sortedTypes,
       maxTypeCount,
       mostCommonType,
@@ -350,7 +351,7 @@ function StatisticsDashboardContent() {
                     onClick={() => setIsDropdownOpen(false)} 
                   />
                   <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl z-20 max-h-80 overflow-y-auto">
-                    {SWEDISH_REGIONS.map(region => (
+                    {availableRegions.map(region => (
                       <button
                         key={region}
                         onClick={() => {
@@ -449,6 +450,12 @@ function StatisticsDashboardContent() {
         <div className="mt-8 text-center text-sm text-gray-500">
           <p>Data hämtas från Polisens öppna API. Statistiken baseras på de senaste 500 händelserna.</p>
           <p className="mt-1">Senast uppdaterad: {new Date().toLocaleString('sv-SE')}</p>
+          <p className="mt-1">
+            {regionEvents.length} av {mappingStats.totalEvents} händelser matchade region {REGION_DISPLAY_NAMES[selectedRegion] || selectedRegion}
+          </p>
+          <p className="text-xs text-gray-400 mt-1">
+            Kartläggning: {mappingStats.mappedEvents} mappade, {mappingStats.unmappedEvents} omappade
+          </p>
         </div>
       </main>
     </div>
