@@ -58,10 +58,15 @@ export default function NotificationPanel() {
   }
 
   const handleAddRule = () => {
+    console.log('handleAddRule called with:', newRule);
     if (newRule.name && newRule.value) {
+      console.log('Adding rule:', newRule);
       addRule(newRule);
       setNewRule({ name: '', type: 'region', value: '', enabled: true });
       setShowAddRule(false);
+      console.log('Rule added successfully');
+    } else {
+      console.log('Form validation failed - missing name or value');
     }
   };
 
@@ -182,13 +187,13 @@ export default function NotificationPanel() {
                         placeholder="Regelnamn (t.ex. Gävleborg varningar)"
                         value={newRule.name}
                         onChange={(e) => setNewRule({ ...newRule, name: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       />
                       
                       <select
                         value={newRule.type}
                         onChange={(e) => setNewRule({ ...newRule, type: e.target.value as any, value: '' })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       >
                         <option value="region">Region (län)</option>
                         <option value="city">Stad/Ort</option>
@@ -199,11 +204,11 @@ export default function NotificationPanel() {
                         <select
                           value={newRule.value}
                           onChange={(e) => setNewRule({ ...newRule, value: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         >
-                          <option value="">Välj region...</option>
+                          <option value="" className="text-gray-500">Välj region...</option>
                           {SWEDISH_REGIONS.map((region) => (
-                            <option key={region} value={region}>
+                            <option key={region} value={region} className="text-gray-900">
                               {REGION_DISPLAY_NAMES[region] || region}
                             </option>
                           ))}
@@ -218,7 +223,7 @@ export default function NotificationPanel() {
                           }
                           value={newRule.value}
                           onChange={(e) => setNewRule({ ...newRule, value: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         />
                       )}
 
@@ -231,7 +236,8 @@ export default function NotificationPanel() {
                         </button>
                         <button
                           onClick={handleAddRule}
-                          className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700"
+                          disabled={!newRule.name || !newRule.value}
+                          className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                         >
                           Lägg till
                         </button>
