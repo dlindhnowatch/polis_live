@@ -280,7 +280,7 @@ function StatisticsDashboardContent() {
   const { data: sharedCacheStats } = useSharedCacheStats();
   
   // Choose which events to use
-  const allEvents = useHistoricalData ? historicalEvents : currentEvents;
+  const allEvents = useHistoricalData ? (historicalEvents || []) : (currentEvents || []);
   const isLoading = useHistoricalData ? isLoadingHistorical : isLoadingCurrent;
 
   // Get available regions that have data, sorted alphabetically with 'Hela Sverige' at top
@@ -308,6 +308,10 @@ function StatisticsDashboardContent() {
 
   // Filter events for selected region using secure mapping
   const regionEvents = useMemo(() => {
+    if (!Array.isArray(allEvents)) {
+      return [];
+    }
+    
     if (selectedRegion === 'Hela Sverige') {
       return allEvents; // Return all events for Sweden
     }
