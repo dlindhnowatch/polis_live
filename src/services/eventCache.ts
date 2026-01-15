@@ -88,7 +88,7 @@ class EventCacheService {
     return events.sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
   }
 
-  async getCurrentEvents(): Promise<PoliceEvent[]> {
+  async getCurrentEvents(): Promise<CachedEvent[]> {
     await this.initialize();
     return Array.from(this.cache.values())
       .filter(event => !event.isArchived)
