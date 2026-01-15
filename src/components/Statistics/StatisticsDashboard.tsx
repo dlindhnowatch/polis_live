@@ -589,7 +589,7 @@ function StatisticsDashboardContent() {
           <p>Data hämtas från Polisens öppna API. Statistiken baseras på de senaste 500 händelserna.</p>
           <p className="mt-1">Senast uppdaterad: {new Date().toLocaleString('sv-SE')}</p>
           <p className="mt-1">
-            {regionEvents.length} av {allEvents.length} händelser matchade region {REGION_DISPLAY_NAMES[selectedRegion] || selectedRegion}
+            {regionEvents.length} av {Array.isArray(allEvents) ? allEvents.length : 0} händelser matchade region {REGION_DISPLAY_NAMES[selectedRegion] || selectedRegion}
           </p>
         </div>
       </main>
