@@ -2,13 +2,15 @@
 
 import { useState, useMemo } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { usePoliceEvents } from '@/hooks/usePoliceEvents';
+import { usePoliceEvents, useCachedEvents, useAvailableDateRange, useCacheMetadata, useSharedCacheStats } from '@/hooks/usePoliceEvents';
 import { SWEDISH_REGIONS, REGION_DISPLAY_NAMES, getAvailableRegions } from '@/utils/regions';
 import { getRegionForLocation } from '@/utils/regionMappingSecure';
 import { EVENT_TYPE_COLORS, getEventTypeInfo } from '@/utils/eventHelpers';
 import { PoliceEvent } from '@/types/police';
+import { DateRange } from '@/services/eventCache';
 import Link from 'next/link';
 import EventModal from '@/components/Modal/EventModal';
+import DateRangeSelector from '@/components/DateRangeSelector/DateRangeSelector';
 import {
   Shield,
   MapPin,
@@ -111,25 +113,18 @@ interface TimeDistributionProps {
 
 function TimeDistribution({ events }: TimeDistributionProps) {
   const hourCounts = useMemo(() => {
-    console.log('TimeDistribution - Processing events:', events.length);
     const counts = new Array(24).fill(0);
-    events.forEach((event, index) => {
+    events.forEach((event) => {
       const dateObj = new Date(event.datetime);
       const hour = dateObj.getHours();
-      if (index < 3) { // Log first few events for debugging
-        console.log(`Event ${index}: datetime="${event.datetime}", parsed date="${dateObj}", hour=${hour}`);
-      }
       if (!isNaN(hour) && hour >= 0 && hour < 24) {
         counts[hour]++;
       }
     });
-    console.log('Hour counts:', counts);
-    console.log('Total events distributed:', counts.reduce((a, b) => a + b, 0));
     return counts;
   }, [events]);
 
   const maxCount = Math.max(...hourCounts, 1);
-  console.log('Max count for chart:', maxCount);
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
@@ -141,9 +136,6 @@ function TimeDistribution({ events }: TimeDistributionProps) {
         {hourCounts.map((count, hour) => {
           const height = maxCount > 0 ? (count / maxCount) * 100 : 0;
           const pixelHeight = maxCount > 0 ? Math.max((count / maxCount) * 160, count > 0 ? 8 : 0) : 0; // 160px = h-40
-          if (count > 0) {
-            console.log(`Hour ${hour}: count=${count}, height=${height}%, pixelHeight=${pixelHeight}px`);
-          }
           return (
             <div key={hour} className="flex-1 flex flex-col items-end justify-end h-full">
               <div 
@@ -154,8 +146,6 @@ function TimeDistribution({ events }: TimeDistributionProps) {
                 }}
                 title={`${hour}:00 - ${count} händelser`}
               />
-              {/* Debug: show hour labels */}
-              <span className="text-xs text-gray-400 mt-1">{hour}</span>
             </div>
           );
         })}
@@ -271,7 +261,27 @@ function StatisticsDashboardContent() {
   const [selectedEvent, setSelectedEvent] = useState<PoliceEvent | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
-  const { data: allEvents = [], isLoading } = usePoliceEvents({});
+  // Date range and archive state
+  const [dateRange, setDateRange] = useState<DateRange>(() => {
+    const today = new Date().toISOString().split('T')[0];
+    return { startDate: today, endDate: today };
+  });
+  const [isArchiveMode, setIsArchiveMode] = useState(false);
+  const [useHistoricalData, setUseHistoricalData] = useState(false);
+  
+  // Data fetching
+  const { data: currentEvents = [], isLoading: isLoadingCurrent } = usePoliceEvents({});
+  const { data: historicalEvents = [], isLoading: isLoadingHistorical } = useCachedEvents(
+    useHistoricalData ? dateRange : undefined, 
+    isArchiveMode
+  );
+  const { data: availableDateRange } = useAvailableDateRange();
+  const { data: cacheMetadata } = useCacheMetadata();
+  const { data: sharedCacheStats } = useSharedCacheStats();
+  
+  // Choose which events to use
+  const allEvents = useHistoricalData ? historicalEvents : currentEvents;
+  const isLoading = useHistoricalData ? isLoadingHistorical : isLoadingCurrent;
 
   // Get available regions that have data, sorted alphabetically with 'Hela Sverige' at top
   const availableRegions = useMemo(() => {
@@ -315,6 +325,28 @@ function StatisticsDashboardContent() {
   const handleModalClose = () => {
     setIsModalOpen(false);
     setSelectedEvent(null);
+  };
+
+  const handleDateRangeChange = (newDateRange: DateRange) => {
+    setDateRange(newDateRange);
+    setUseHistoricalData(true);
+  };
+
+  const handleToggleArchive = () => {
+    setIsArchiveMode(!isArchiveMode);
+    setUseHistoricalData(true);
+  };
+
+  const handleRefreshCache = async () => {
+    // Force refresh current events to update cache
+    window.location.reload();
+  };
+
+  const handleBackToCurrent = () => {
+    setUseHistoricalData(false);
+    setIsArchiveMode(false);
+    const today = new Date().toISOString().split('T')[0];
+    setDateRange({ startDate: today, endDate: today });
   };
 
   // Calculate statistics
@@ -375,57 +407,101 @@ function StatisticsDashboardContent() {
       {/* Header */}
       <header className="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <Link
-                href="/"
-                className="flex items-center gap-2 text-blue-200 hover:text-white transition-colors"
-              >
-                <ArrowLeft className="w-5 h-5" />
-                <span className="text-sm font-medium">Tillbaka</span>
-              </Link>
-              <div className="h-6 w-px bg-blue-700" />
-              <div className="flex items-center gap-3">
-                <Shield className="w-8 h-8 text-blue-300" />
-                <h1 className="text-2xl font-bold">Statistik</h1>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <Link
+                  href="/"
+                  className="flex items-center gap-2 text-blue-200 hover:text-white transition-colors"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                  <span className="text-sm font-medium">Tillbaka</span>
+                </Link>
+                <div className="h-6 w-px bg-blue-700" />
+                <div className="flex items-center gap-3">
+                  <Shield className="w-8 h-8 text-blue-300" />
+                  <h1 className="text-2xl font-bold">
+                    {isArchiveMode ? 'Statistik - Arkiv' : useHistoricalData ? 'Statistik - Historik' : 'Statistik'}
+                  </h1>
+                </div>
+              </div>
+              
+              {/* Region Selector */}
+              <div className="relative">
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur px-4 py-2 rounded-lg transition-colors w-full sm:w-auto justify-between"
+                >
+                  <MapPin className="w-5 h-5 text-blue-300" />
+                  <span className="font-medium">{selectedRegion === 'Hela Sverige' ? 'Hela Sverige' : (REGION_DISPLAY_NAMES[selectedRegion] || selectedRegion)}</span>
+                  <ChevronDown className={`w-5 h-5 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {isDropdownOpen && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-10" 
+                      onClick={() => setIsDropdownOpen(false)} 
+                    />
+                    <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl z-20 max-h-80 overflow-y-auto">
+                      {availableRegions.map(region => (
+                        <button
+                          key={region}
+                          onClick={() => {
+                            setSelectedRegion(region);
+                            setIsDropdownOpen(false);
+                          }}
+                          className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${
+                            selectedRegion === region ? 'bg-blue-100 text-blue-800 font-medium' : 'text-gray-700'
+                          }`}
+                        >
+                          {region === 'Hela Sverige' ? 'Hela Sverige' : (REGION_DISPLAY_NAMES[region] || region)}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
-            
-            {/* Region Selector */}
-            <div className="relative">
-              <button
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur px-4 py-2 rounded-lg transition-colors w-full sm:w-auto justify-between"
-              >
-                <MapPin className="w-5 h-5 text-blue-300" />
-                <span className="font-medium">{selectedRegion === 'Hela Sverige' ? 'Hela Sverige' : (REGION_DISPLAY_NAMES[selectedRegion] || selectedRegion)}</span>
-                <ChevronDown className={`w-5 h-5 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
+
+            {/* Date Range and Archive Controls */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+              <DateRangeSelector
+                dateRange={dateRange}
+                onDateRangeChange={handleDateRangeChange}
+                onToggleArchive={handleToggleArchive}
+                showArchiveToggle={true}
+                isArchiveMode={isArchiveMode}
+                availableDateRange={availableDateRange || undefined}
+                onRefreshCache={handleRefreshCache}
+              />
               
-              {isDropdownOpen && (
-                <>
-                  <div 
-                    className="fixed inset-0 z-10" 
-                    onClick={() => setIsDropdownOpen(false)} 
-                  />
-                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl z-20 max-h-80 overflow-y-auto">
-                    {availableRegions.map(region => (
-                      <button
-                        key={region}
-                        onClick={() => {
-                          setSelectedRegion(region);
-                          setIsDropdownOpen(false);
-                        }}
-                        className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${
-                          selectedRegion === region ? 'bg-blue-100 text-blue-800 font-medium' : 'text-gray-700'
-                        }`}
-                      >
-                        {region === 'Hela Sverige' ? 'Hela Sverige' : (REGION_DISPLAY_NAMES[region] || region)}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
+              {/* Mode Indicators and Controls */}
+              <div className="flex items-center gap-2">
+                {useHistoricalData && (
+                  <button
+                    onClick={handleBackToCurrent}
+                    className="flex items-center gap-2 bg-green-500 hover:bg-green-600 px-3 py-1 rounded text-sm transition-colors"
+                  >
+                    <Activity className="w-4 h-4" />
+                    Tillbaka till aktuellt
+                  </button>
+                )}
+                
+                {/* Cache Information */}
+                <div className="flex flex-col items-end gap-1">
+                  {cacheMetadata && (
+                    <div className="text-xs text-blue-200">
+                      Lokal: {cacheMetadata.totalEvents} händelser
+                    </div>
+                  )}
+                  {sharedCacheStats && (
+                    <div className="text-xs text-blue-300">
+                      Delad: {sharedCacheStats.totalEvents} händelser ({sharedCacheStats.contributors.length} bidragsgivare)
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>

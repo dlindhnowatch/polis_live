@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAppStore } from '@/store/appStore';
 import { usePoliceEvents } from '@/hooks/usePoliceEvents';
 import { useNotificationChecker } from '@/hooks/useNotificationChecker';
+import { sharedCacheService } from '@/services/sharedCache';
 import EventMap from '@/components/Map/EventMap';
 import EventList from '@/components/EventList/EventList';
 import Filters from '@/components/Filters/Filters';
@@ -31,6 +32,11 @@ function PoliceEventsApp() {
   } = useAppStore();
 
   const { data: events = [], isLoading, error } = usePoliceEvents(filters);
+
+  // Initialize shared cache service
+  useEffect(() => {
+    sharedCacheService.initialize();
+  }, []);
 
   // Check for new events that match notification rules
   useNotificationChecker(events);
