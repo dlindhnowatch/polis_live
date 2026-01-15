@@ -8,6 +8,7 @@ import { getRegionForLocation } from '@/utils/regionMappingSecure';
 import { EVENT_TYPE_COLORS, getEventTypeInfo } from '@/utils/eventHelpers';
 import { PoliceEvent } from '@/types/police';
 import Link from 'next/link';
+import EventModal from '@/components/Modal/EventModal';
 import {
   Shield,
   MapPin,
@@ -110,15 +111,25 @@ interface TimeDistributionProps {
 
 function TimeDistribution({ events }: TimeDistributionProps) {
   const hourCounts = useMemo(() => {
+    console.log('TimeDistribution - Processing events:', events.length);
     const counts = new Array(24).fill(0);
-    events.forEach(event => {
-      const hour = new Date(event.datetime).getHours();
-      counts[hour]++;
+    events.forEach((event, index) => {
+      const dateObj = new Date(event.datetime);
+      const hour = dateObj.getHours();
+      if (index < 3) { // Log first few events for debugging
+        console.log(`Event ${index}: datetime="${event.datetime}", parsed date="${dateObj}", hour=${hour}`);
+      }
+      if (!isNaN(hour) && hour >= 0 && hour < 24) {
+        counts[hour]++;
+      }
     });
+    console.log('Hour counts:', counts);
+    console.log('Total events distributed:', counts.reduce((a, b) => a + b, 0));
     return counts;
   }, [events]);
 
   const maxCount = Math.max(...hourCounts, 1);
+  console.log('Max count for chart:', maxCount);
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
@@ -129,13 +140,22 @@ function TimeDistribution({ events }: TimeDistributionProps) {
       <div className="flex items-end justify-between h-40 gap-1">
         {hourCounts.map((count, hour) => {
           const height = maxCount > 0 ? (count / maxCount) * 100 : 0;
+          const pixelHeight = maxCount > 0 ? Math.max((count / maxCount) * 160, count > 0 ? 8 : 0) : 0; // 160px = h-40
+          if (count > 0) {
+            console.log(`Hour ${hour}: count=${count}, height=${height}%, pixelHeight=${pixelHeight}px`);
+          }
           return (
-            <div key={hour} className="flex-1 flex flex-col items-center">
+            <div key={hour} className="flex-1 flex flex-col items-end justify-end h-full">
               <div 
-                className="w-full bg-gradient-to-t from-blue-600 to-blue-400 rounded-t transition-all duration-500 hover:from-blue-700 hover:to-blue-500"
-                style={{ height: `${Math.max(height, 2)}%` }}
+                className="w-full bg-blue-600 rounded-t hover:bg-blue-700 transition-all duration-300"
+                style={{ 
+                  height: `${pixelHeight}px`,
+                  minHeight: count > 0 ? '8px' : '0px'
+                }}
                 title={`${hour}:00 - ${count} händelser`}
               />
+              {/* Debug: show hour labels */}
+              <span className="text-xs text-gray-400 mt-1">{hour}</span>
             </div>
           );
         })}
@@ -153,9 +173,10 @@ function TimeDistribution({ events }: TimeDistributionProps) {
 
 interface RecentEventsListProps {
   events: PoliceEvent[];
+  onEventSelect: (event: PoliceEvent) => void;
 }
 
-function RecentEventsList({ events }: RecentEventsListProps) {
+function RecentEventsList({ events, onEventSelect }: RecentEventsListProps) {
   const recentEvents = events.slice(0, 5);
 
   return (
@@ -173,7 +194,8 @@ function RecentEventsList({ events }: RecentEventsListProps) {
             return (
               <div
                 key={event.id}
-                className="flex items-start gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                onClick={() => onEventSelect(event)}
+                className="flex items-start gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
               >
                 <div
                   className="w-3 h-3 rounded-full mt-1.5 flex-shrink-0"
@@ -244,28 +266,56 @@ function DayDistribution({ events }: DayDistributionProps) {
 }
 
 function StatisticsDashboardContent() {
-  const [selectedRegion, setSelectedRegion] = useState<string>('Stockholm');
+  const [selectedRegion, setSelectedRegion] = useState<string>('Hela Sverige');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<PoliceEvent | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   
   const { data: allEvents = [], isLoading } = usePoliceEvents({});
 
-  // Get available regions that have data
+  // Get available regions that have data, sorted alphabetically with 'Hela Sverige' at top
   const availableRegions = useMemo(() => {
     try {
-      return getAvailableRegions();
+      const regions = getAvailableRegions();
+      // Sort alphabetically
+      const sortedRegions = [...regions].sort((a, b) => {
+        const displayA = REGION_DISPLAY_NAMES[a] || a;
+        const displayB = REGION_DISPLAY_NAMES[b] || b;
+        return displayA.localeCompare(displayB, 'sv');
+      });
+      // Add 'Hela Sverige' at the beginning
+      return ['Hela Sverige', ...sortedRegions];
     } catch (error) {
       console.error('Error loading available regions:', error);
-      return SWEDISH_REGIONS.slice();
+      const sortedRegions = [...SWEDISH_REGIONS].sort((a, b) => {
+        const displayA = REGION_DISPLAY_NAMES[a] || a;
+        const displayB = REGION_DISPLAY_NAMES[b] || b;
+        return displayA.localeCompare(displayB, 'sv');
+      });
+      return ['Hela Sverige', ...sortedRegions];
     }
   }, []);
 
   // Filter events for selected region using secure mapping
   const regionEvents = useMemo(() => {
+    if (selectedRegion === 'Hela Sverige') {
+      return allEvents; // Return all events for Sweden
+    }
     return allEvents.filter(event => {
       const eventRegion = getRegionForLocation(event.location.name);
       return eventRegion === selectedRegion;
     });
   }, [allEvents, selectedRegion]);
+
+  const handleEventSelect = (event: PoliceEvent) => {
+    setSelectedEvent(event);
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedEvent(null);
+  };
 
   // Calculate statistics
   const stats = useMemo(() => {
@@ -348,7 +398,7 @@ function StatisticsDashboardContent() {
                 className="flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur px-4 py-2 rounded-lg transition-colors w-full sm:w-auto justify-between"
               >
                 <MapPin className="w-5 h-5 text-blue-300" />
-                <span className="font-medium">{REGION_DISPLAY_NAMES[selectedRegion] || selectedRegion}</span>
+                <span className="font-medium">{selectedRegion === 'Hela Sverige' ? 'Hela Sverige' : (REGION_DISPLAY_NAMES[selectedRegion] || selectedRegion)}</span>
                 <ChevronDown className={`w-5 h-5 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
               
@@ -370,7 +420,7 @@ function StatisticsDashboardContent() {
                           selectedRegion === region ? 'bg-blue-100 text-blue-800 font-medium' : 'text-gray-700'
                         }`}
                       >
-                        {REGION_DISPLAY_NAMES[region] || region}
+                        {region === 'Hela Sverige' ? 'Hela Sverige' : (REGION_DISPLAY_NAMES[region] || region)}
                       </button>
                     ))}
                   </div>
@@ -445,7 +495,7 @@ function StatisticsDashboardContent() {
           </div>
 
           {/* Recent Events */}
-          <RecentEventsList events={regionEvents} />
+          <RecentEventsList events={regionEvents} onEventSelect={handleEventSelect} />
         </div>
 
         {/* Time Distribution Charts */}
@@ -463,6 +513,13 @@ function StatisticsDashboardContent() {
           </p>
         </div>
       </main>
+
+      {/* Event Detail Modal */}
+      <EventModal
+        event={selectedEvent}
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+      />
     </div>
   );
 }
